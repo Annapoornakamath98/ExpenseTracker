@@ -1,26 +1,38 @@
-import { Text, View } from "react-native";
-import ExpensesOutput from "../components/ExpensesOutput/ExpensesOutput";
 import { useContext, useEffect, useState } from "react";
-import { ExpensesContext } from "../store/expense-context";
+
+import ExpensesOutput from "../components/ExpensesOutput/ExpensesOutput";
+import LoadingOverlay from "../components/UI/LoadingOverlay";
+
 import { getDateMinusDays } from "../util/date";
 import { fetchExpenses } from "../util/http";
+import { ExpensesContext } from "../store/expense-context";
 
-function RecentExpense() {
-  const expenseCtx = useContext(ExpensesContext);
-  //const [fetchedExpenses, setFetchedExpenses] = useState([]);
+function RecentExpenses() {
+  const [isFetching, setIsFetching] = useState(true);
+  const expensesCtx = useContext(ExpensesContext);
+
   useEffect(() => {
     async function getExpenses() {
+      setIsFetching(true);
       const expenses = await fetchExpenses();
-      expenseCtx.setExpenses(expenses);
+      setIsFetching(false);
+      expensesCtx.setExpenses(expenses);
     }
+
     getExpenses();
   }, []);
 
-  const recentExpenses = expenseCtx.expenses.filter((expense) => {
+  if (isFetching) {
+    return <LoadingOverlay />;
+  }
+
+  const recentExpenses = expensesCtx.expenses.filter((expense) => {
     const today = new Date();
-    const date7daysAgo = getDateMinusDays(today, 7);
-    return expense.date >= date7daysAgo && expense.date <= today;
+    const date7DaysAgo = getDateMinusDays(today, 7);
+
+    return expense.date >= date7DaysAgo && expense.date <= today;
   });
+
   return (
     <ExpensesOutput
       expenses={recentExpenses}
@@ -30,4 +42,4 @@ function RecentExpense() {
   );
 }
 
-export default RecentExpense;
+export default RecentExpenses;
