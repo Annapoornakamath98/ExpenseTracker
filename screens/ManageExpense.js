@@ -5,12 +5,12 @@ import ExpenseForm from "../components/ManageExpense/ExpenseForm";
 import Button from "../components/UI/Button";
 import IconButton from "../components/UI/IconButton";
 import { GlobalStyles } from "../constants/styles";
-import { ExpenseContext } from "../store/expense-context";
+import { ExpensesContext } from "../store/expense-context";
 import { storeExpense } from "../util/http";
 
 
 function ManageExpense({ route, navigation }) {
-  const expensesCtx = useContext(ExpenseContext);
+  const expensesCtx = useContext(ExpensesContext);
 
   const editedExpenseId = route.params?.expenseId;
   const isEditing = !!editedExpenseId;
